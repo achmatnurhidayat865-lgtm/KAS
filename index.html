@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asheeqa Printing - Dashboard</title>
+    <style>
+        :root { 
+            --primary: #3498db; 
+            --primary-dark: #2980b9;
+            --secondary: #1e293b; 
+            --success: #10b981; 
+            --danger: #ef4444; 
+            --warning: #f59e0b; 
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+            background: var(--bg-light); 
+            margin: 0; 
+            padding: 0; 
+            font-size: 13px; 
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* SIDEBAR / NAVIGATION */
+        .sidebar {
+            background: var(--secondary);
+            color: #f1f5f9;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin: 0;
+            color: #fff;
+        }
+
+        .brand-subtitle {
+            font-size: 10px;
+            color: var(--primary);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .nav-container { 
+            display: flex; 
+            gap: 6px; 
+        }
+
+        .nav-btn { 
+            padding: 10px 14px; 
+            border: none; 
+            border-radius: 8px; 
+            background: rgba(255, 255, 255, 0.05); 
+            color: #cbd5e1; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 12px; 
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .nav-btn.active { 
+            background: var(--primary); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0 auto;
+            margin-bottom: 75px; 
+        }
+
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CONTAINERS & CARDS */
+        .container { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px; 
+        }
+        
+        h3, h4 { margin-top: 0; color: var(--secondary); font-size: 15px; font-weight: 700; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 15px;}
+
+        .grid-dash { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+            margin-bottom: 20px; 
+        }
+
+        .stat-card { 
+            background: var(--card-bg); 
+            color: var(--secondary); 
+            padding: 16px 12px; 
+            border-radius: 14px; 
+            text-align: center; 
+            font-size: 11px; 
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-card b { font-size: 15px; display: block; margin-top: 5px; color: var(--secondary); }
+        
+        .stat-card.masuk { border-left: 4px solid var(--success); }
+        .stat-card.masuk b { color: var(--success); }
+        .stat-card.keluar { border-left: 4px solid var(--danger); }
+        .stat-card.keluar b { color: var(--danger); }
+        .stat-card.laba { background: linear-gradient(135deg, #8e44ad, #732d91); color: white; border: none; }
+        .stat-card.laba b { color: white; font-size: 16px; }
+        .stat-card.piutang { background: linear-gradient(135deg, #d35400, #e67e22); color: white; border: none; grid-column: span 3; padding: 18px;}
+        .stat-card.piutang b { color: white; font-size: 18px; }
+
+        /* MINI SUMMARY FOR HISTORY PERIOD */
+        .history-summary-box {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .grid-history-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .summary-mini-card {
+            background: white;
+            padding: 10px 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+        .summary-mini-card span { display: block; font-size: 13px; margin-top: 4px; font-weight: 700; }
+        .summary-mini-card.in span { color: var(--success); }
+        .summary-mini-card.out span { color: var(--danger); }
+        .summary-mini-card.profit { background: var(--secondary); color: white; border: none; }
+        .summary-mini-card.profit span { color: #3498db; }
+
+        /* FILTER TABS FOR HISTORY PAGE */
+        .history-filter-container {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .filter-tab-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 10px 4px;
+            font-size: 11px;
+            font-weight: 700;
+            background: transparent;
+            color: #475569;
+            border: none;
+            border-radius: 8px;
+            margin: 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-tab-btn:active { transform: none; }
+        .filter-tab-btn.active {
+            background: white;
+            color: var(--secondary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* TIME & SEARCH CONTROL PANEL */
+        .control-panel-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .period-filters {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+        .search-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        .search-wrapper input {
+            margin: 0;
+            padding-left: 36px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
+            background-size: 18px;
+            background-repeat: no-repeat;
+            background-position: 12px center;
+        }
+        .control-panel-wrapper select, .control-panel-wrapper input {
+            margin: 0;
+        }
+
+        /* ACTION BUTTONS GROUP */
+        .action-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        /* INPUTS & BUTTONS */
+        input, select, button { 
+            width: 100%; 
+            padding: 12px 16px; 
+            margin: 6px 0; 
+            border-radius: 10px; 
+            border: 1px solid #cbd5e1; 
+            box-sizing: border-box; 
+            font-family: inherit;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        }
+        button { cursor: pointer; font-weight: bold; color: white; border: none; }
+        button:active { transform: scale(0.98); }
+        .item-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        
+        /* TABLES */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; font-size: 12px; border-radius: 8px; overflow: hidden; }
+        th { background: #f1f5f9; color: #475569; font-weight: 700; border: 1px solid #e2e8f0; padding: 10px 8px; }
+        td { border: 1px solid #e2e8f0; padding: 10px 8px; color: #334155; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        
+      /* DESAIN AREA CETAK NOTA */
+        #area-cetak-nota { display: none; }
+        @media print {
+            .no-print { display: none !important; }
+            #area-cetak-nota { display: block !important; width: 100%; font-family: 'Segoe UI', sans-serif; background: white; }
+            body { background: white; }
+            .nota-wrapper { border: none !important; } /* Hilangkan border kotak saat print jika ingin lebih bersih */
+        }
+        .nota-wrapper { border: 1.5px solid #333; padding: 20px; border-radius: 8px; max-width: 700px; margin: auto; background: white; }
+        .header-table { width: 100%; border-bottom: 3px double #333; padding-bottom: 15px; margin-bottom: 15px; }
+        .logo-img { width: 65px; height: 65px; object-fit: contain; }
+        .logo-box { width: 60px; height: 60px; background: #2c3e50; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; }
+        .p-judul { color: #2980b9; border: 2px solid #2980b9; padding: 4px 12px; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 14px; }
+        .table-pesanan { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .table-pesanan th { background: #f8f9fa; border: 1px solid #ccc; padding: 10px; font-weight: bold; }
+        .table-pesanan td { border: 1px solid #ccc; padding: 10px; }
+
+        /* RESPONSIVE LAPTOP / DESKTOP */
+        @media (min-width: 768px) {
+            .app-layout { flex-direction: row; }
+            .sidebar { 
+                width: 250px; 
+                height: 100vh; 
+                flex-direction: column; 
+                justify-content: flex-start; 
+                align-items: stretch;
+                position: sticky; 
+                top: 0; 
+                padding: 30px 20px;
+            }
+            .brand-section { flex-direction: column; align-items: flex-start; margin-bottom: 35px; gap: 4px; }
+            .brand-title { font-size: 20px; }
+            .brand-subtitle { font-size: 11px; }
+            .nav-container { flex-direction: column; gap: 10px; }
+            .nav-btn { padding: 12px 18px; font-size: 13px; }
+            .main-content { padding: 40px; margin-bottom: 0; }
+            .control-panel-wrapper { flex-direction: row; align-items: center; }
+        }
+
+        /* RESPONSIVE HP (BOTTOM NAVBAR) */
+        @media (max-width: 767px) {
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                left: 0;
+                right: 0;
+                height: 70px;
+                padding: 0 5px;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+                justify-content: center;
+            }
+            .brand-section { display: none; } 
+            .nav-container { width: 100%; justify-content: space-around; gap: 2px; }
+            .nav-btn { flex: 1; justify-content: center; padding: 8px 2px; font-size: 10px; flex-direction: column; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+<div id="area-cetak-nota">
+    <div class="nota-wrapper">
+        <table class="header-table">
+            <tr>
+                <td style="width: 75px;">
+                   <img src="https://lh3.googleusercontent.com/u/0/d/1F055wulsiC-LDjW_NMZ4yXsMSCDj53TW" class="logo-img" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='flex';">
+                    <div id="alt-logo" class="logo-box" style="display:none;">A</div>
+                </td>
+                <td>
+                    <h2 style="margin:0; color: #2c3e50; font-size: 24px; letter-spacing: 1px;">ASHEEQA PRINTING</h2>
+                    <p style="font-size:11px; margin:3px 0; font-weight: bold; color: #2980b9;">Percetakan & Desain Undangan</p>
+                    <p style="font-size:10px; margin:0; color: #555;">Jl. Borong Raya 2 | WhatsApp: 089699910769</p>
+                </td>
+                <td style="text-align: right; vertical-align: middle;">
+                    <span id="p_judul" class="p-judul">NOTA</span>
+                </td>
+            </tr>
+        </table>
+
+        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 15px; padding: 0 5px;">
+            <div><b>Kepada Yth:</b><br><span id="p_cs" style="font-size: 14px; font-weight: bold; text-transform: uppercase;"></span></div>
+            <div style="text-align: right;"><b>Tanggal:</b><br><span id="p_tgl"></span></div>
+        </div>
+
+        <table class="table-pesanan">
+            <thead>
+                <tr>
+                    <th>Deskripsi Pesanan</th>
+                    <th style="width: 60px; text-align: center;">Qty</th>
+                    <th style="width: 120px; text-align: right;">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="p_items"></tbody>
+        </table>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+            <table style="width: 260px; font-size: 13px; line-height: 1.8;">
+                <tr>
+                    <td>Total Keseluruhan</td>
+                    <td style="text-align: right;">Rp <span id="p_total"></span></td>
+                </tr>
+                <tr id="row_dp_lama">
+                    <td>Uang Muka / Sebelumnya</td>
+                    <td style="text-align: right;">- Rp <span id="p_dp_lama"></span></td>
+                </tr>
+                <tr>
+                    <td style="border-top: 1px solid #333;"><b>Bayar Sekarang</b></td>
+                    <td style="text-align: right; border-top: 1px solid #333;"><b>Rp <span id="p_dp"></span></b></td>
+                </tr>
+                <tr style="font-size: 15px; color: #27ae60;">
+                    <td><b>Sisa Pelunasan</b></td>
+                    <td style="text-align: right;"><b>Rp <span id="p_sisa"></span></b></td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="margin-top: 30px; border-top: 1px dashed #bbb; padding-top: 10px; font-size: 10px; text-align: center; color: #666; font-style: italic;">
+            "Terima kasih telah mempercayakan cetakan Anda kepada kami."
+        </div>
+    </div>
+</div>
+
+<div class="no-print app-layout">
+    
+    <aside class="sidebar">
+        <div class="brand-section">
+            <img src="https://lh3.googleusercontent.com/u/0/d/1F055wulsiC-LDjW_NMZ4yXsMSCDj53TW" 
+                 alt="Logo Asheeqa" 
+                 style="width: 40px; height: 40px; object-fit: contain; border-radius: 8px; background: white; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div>
+                <h1 class="brand-title" style="margin: 0; line-height: 1.2;">ASHEEQA</h1>
+                <p class="brand-subtitle" style="margin: 0;">Buku Kas & Keuangan</p>
+            </div>
+        </div>
+        <div class="nav-container">
+            <button id="btn-page-dash" class="nav-btn active" onclick="switchPage('dash')">📊 <span>Dashboard</span></button>
+            <button id="btn-page-input" class="nav-btn" onclick="switchPage('input')">📥 <span>Input Transaksi</span></button>
+            <button id="btn-page-estimasi" class="nav-btn" onclick="switchPage('estimasi')">💬 <span>Estimasi Harga</span></button>
+            <button id="btn-page-history" class="nav-btn" onclick="switchPage('history')">📜 <span>Riwayat</span></button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <div id="section-dash" class="page-section active">
+            <div class="grid-dash">
+                <div class="stat-card">Cash<b id="d_cash">0</b></div>
+                <div class="stat-card">BNI<b id="d_bni">0</b></div>
+                <div class="stat-card">BRI<b id="d_bri">0</b></div>
+                <div class="stat-card masuk">Masuk (Bln Ini)<b id="d_masuk">0</b></div>
+                <div class="stat-card keluar">Keluar (Bln Ini)<b id="d_keluar">0</b></div>
+                <div class="stat-card laba">Laba Bersih<b id="d_laba">0</b></div>
+                <div class="stat-card piutang">Total Piutang (Sisa di Pelanggan)<b id="d_piutang">0</b></div>
+            </div>
+        </div>
+
+        <div id="section-input" class="page-section">
+            <div class="container">
+                <h3>Input Nota Baru</h3>
+                <input type="text" id="cs" placeholder="Nama Pelanggan">
+                <div id="items-container">
+                    <div class="item-row">
+                        <input type="text" class="nn" placeholder="Barang" style="flex:2">
+                        <input type="number" class="nq" placeholder="Qty" style="flex:1" oninput="updateOtomatis()">
+                        <input type="number" class="nh" placeholder="Harga" style="flex:1" oninput="updateOtomatis()">
+                    </div>
+                </div>
+                <button onclick="tambahBaris()" style="background:#f1f5f9; color:#334155; border: 1px solid #cbd5e1; margin-bottom:10px;">+ Tambah Baris Barang</button>
+                <p style="font-size: 14px; background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 4px solid var(--primary);">Total: <b id="txt_total">0</b> | Sisa: <b id="txt_sisa">0</b></p>
+                <input type="number" id="input_dp" placeholder="Nominal Bayar/DP" oninput="hitungSisa()">
+                <select id="metode"><option value="Cash">Cash</option><option value="BNI">BNI</option><option value="BRI">BRI</option></select>
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                    <button style="background:var(--primary)" onclick="simpanData(false)">SIMPAN DATA</button>
+                    <button style="background:var(--success)" onclick="simpanData(true)">CETAK NOTA</button>
+                </div>
+            </div>
+
+            <div class="container" style="border-top:4px solid var(--danger)">
+                <h3>Pengeluaran Operasional</h3>
+                <input type="text" id="ex_n" placeholder="Keperluan/Nama Barang Pengeluaran">
+                <input type="number" id="ex_h" placeholder="Biaya Pengeluaran (Rp)">
+                <select id="ex_m"><option value="Cash">Cash</option><option value="BNI">BNI</option><option value="BRI">BRI</option></select>
+                <button style="background:var(--danger)" onclick="simpanExp()">SIMPAN PENGELUARAN</button>
+            </div>
+
+            <div class="container" style="border-top:4px solid var(--warning)">
+                <h3>🔄 Peralihan Dana (Transfer Antar Rekening)</h3>
+                <p style="color: #64748b; margin-top:-10px; font-size:11px;">Gunakan form ini khusus untuk memindahkan saldo kas internal.</p>
+                <div style="display:flex; gap:8px;">
+                    <select id="tf_d"><option value="Cash">Dari Cash</option><option value="BNI">Dari BNI</option><option value="BRI">Dari BRI</option></select>
+                    <select id="tf_k"><option value="BNI">Ke BNI</option><option value="BRI">Ke BRI</option><option value="Cash">Ke Cash</option></select>
+                </div>
+                <input type="number" id="tf_j" placeholder="Jumlah Nominal Transfer (Rp)">
+                <button style="background:var(--warning); color:#1e293b;" onclick="prosesAlih()">PROSES PERALIHAN DANA</button>
+            </div>
+        </div>
+
+        <div id="section-estimasi" class="page-section">
+            <div class="container" style="border-top:4px solid #25D366">
+                <h3>Kalkulator Estimasi Harga</h3>
+                <input type="text" id="est_cs" placeholder="Nama Calon Pelanggan">
+                <select id="est_paket_bonus">
+                    <option value="0">--- Tanpa Paket Bonus ---</option>
+                    <option value="1">Paket 1 (Free Label, Free Plastik, Desain)</option>
+                    <option value="2">Paket 2 (Free Label, Free Plastik, Cetak Nama, Desain)</option>
+                    <option value="3">Paket 3 (Free Label, Free Plastik, Cetak Nama, Desain, Undangan Digital)</option>
+                </select>
+                <div id="est-items-container" style="margin-top: 15px;">
+                    <div class="est-item-row" style="display:flex; gap:8px; margin-bottom:8px;">
+                        <input type="text" class="est_nn" placeholder="Nama Barang" style="flex:2">
+                        <input type="number" class="est_nq" placeholder="Qty" style="flex:1" oninput="hitungOtomatisEstimasi()">
+                        <input type="number" class="est_nh" placeholder="Harga Satuan" style="flex:1" oninput="hitungOtomatisEstimasi()">
+                    </div>
+                </div>
+                <button onclick="tambahBarisEstimasi()" style="background:#f1f5f9; color:#334155; border: 1px solid #cbd5e1; margin-bottom:10px;">+ Tambah Barang</button>
+                <div style="font-size: 14px; background: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 4px solid #25D366; line-height: 1.6;">
+                    Total Estimasi: <b>Rp <span id="est_txt_total">0</span></b><br>
+                    Wajib DP 50%: <b>Rp <span id="est_txt_dp">0</span></b><br>
+                    Sisa Saat Selesai: <b>Rp <span id="est_txt_sisa">0</span></b>
+                </div>
+                <button style="background:#25D366; margin-top:15px; font-size:14px;" onclick="kirimEstimasiWAKhusus()">📲 KIRIM RINCIAN KE WHATSAPP</button>
+            </div>
+        </div>
+
+        <div id="section-history" class="page-section">
+            <div class="history-filter-container">
+                <button id="tab-all" class="filter-tab-btn active" onclick="switchHistoryTab('all')">📑 Semua data</button>
+                <button id="tab-nota" class="filter-tab-btn" onclick="switchHistoryTab('nota')">📥 Pemesanan (Nota)</button>
+                <button id="tab-exp" class="filter-tab-btn" onclick="switchHistoryTab('exp')">💸 Pengeluaran</button>
+                <button id="tab-alih" class="filter-tab-btn" onclick="switchHistoryTab('alih')">🔄 Peralihan Dana</button>
+            </div>
+
+            <div class="control-panel-wrapper">
+                <div class="period-filters">
+                    <select id="filter-bulan" onchange="renderTabelBerdasarkanPeriode()">
+                        <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                        <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                        <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                        <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                    </select>
+                    <select id="filter-tahun" onchange="renderTabelBerdasarkanPeriode()"></select>
+                </div>
+                <div class="search-wrapper">
+                    <input type="text" id="cari-riwayat" placeholder="Cari..." oninput="renderTabelBerdasarkanPeriode()">
+                </div>
+            </div>
+
+            <div class="history-summary-box">
+                <div class="grid-history-summary">
+                    <div class="summary-mini-card in">Masuk<span>Rp <span id="h_summary_masuk">0</span></span></div>
+                    <div class="summary-mini-card out">Keluar<span>Rp <span id="h_summary_keluar">0</span></span></div>
+                    <div class="summary-mini-card profit">Laba<span>Rp <span id="h_summary_laba">0</span></span></div>
+                </div>
+            </div>
+
+            <div id="box-history-nota" class="container">
+                <h3>Riwayat Pemesanan</h3>
+                <div style="overflow-x: auto;"><table id="tabel_nota"><thead><tr><th>Pelanggan</th><th>Total</th><th>Sisa</th><th>Aksi</th></tr></thead><tbody></tbody></table></div>
+            </div>
+
+            <div id="box-history-exp" class="container" style="border-top: 4px solid var(--danger);">
+                <h3>Riwayat Pengeluaran</h3>
+                <div style="overflow-x: auto;"><table id="tabel_exp"><thead><tr><th>Tgl</th><th>Keterangan</th><th>Total</th></tr></thead><tbody></tbody></table></div>
+            </div>
+
+            <div id="box-history-alih" class="container" style="border-top: 4px solid var(--warning);">
+                <h3>Riwayat Peralihan Dana</h3>
+                <div style="overflow-x: auto;"><table id="tabel_alih"><thead><tr><th>Tgl</th><th>Keterangan</th><th>Jumlah</th></tr></thead><tbody></tbody></table></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbzR71ikbwM2001-aN-1AoMkf1chZd-0sDIWgRNUcUde9dnCRPGJSEUSjZoO8oX4lUVOLw/exec';
+    let dataNotaGlobal = [], dataExpGlobal = [], dataAlihGlobal = []; 
+
+    const tglS = new Date();
+    document.getElementById('filter-bulan').value = tglS.getMonth() + 1;
+    const sTahun = document.getElementById('filter-tahun');
+    for(let t = tglS.getFullYear() - 2; t <= tglS.getFullYear() + 1; t++) {
+        let opt = document.createElement('option'); opt.value = t; opt.innerText = t;
+        if(t === tglS.getFullYear()) opt.selected = true;
+        sTahun.appendChild(opt);
+    }
+
+    function switchPage(pId) {
+        document.querySelectorAll('.page-section, .nav-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('section-' + pId).classList.add('active');
+        document.getElementById('btn-page-' + pId).classList.add('active');
+        if(pId === 'history') switchHistoryTab('all');
+    }
+
+    function switchHistoryTab(tab) {
+        document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        document.getElementById('box-history-nota').style.display = (tab==='all'||tab==='nota') ? 'block' : 'none';
+        document.getElementById('box-history-exp').style.display = (tab==='all'||tab==='exp') ? 'block' : 'none';
+        document.getElementById('box-history-alih').style.display = (tab==='all'||tab==='alih') ? 'block' : 'none';
+    }
+
+    function eksTgl(row) {
+        let tglStr = row[row.length - 1] || row[6] || row[0];
+        let t = new Date(tglStr); return isNaN(t.getTime()) ? new Date() : t;
+    }
+
+    function renderTabelBerdasarkanPeriode() {
+        let bln = parseInt(document.getElementById('filter-bulan').value);
+        let thn = parseInt(document.getElementById('filter-tahun').value);
+        let cari = document.getElementById('cari-riwayat').value.toLowerCase().trim();
+        let inP = 0, outP = 0;
+
+        // Tabel Nota
+        let hNota = dataNotaGlobal.filter(r => {
+            let t = eksTgl(r);
+            return (t.getMonth()+1)===bln && t.getFullYear()===thn && (cari==="" || String(r[1]).toLowerCase().includes(cari));
+        }).map(r => {
+            inP += Number(r[4])||0;
+            let aksi = Number(r[5]) > 0 ? `<button onclick="prosesPelunasan('${r[0]}')" style="background:var(--success); padding:6px; font-size:10px; width:auto;">💰 Pelunasan</button>` : `<span style="color:var(--success); font-weight:bold;">LUNAS</span>`;
+            return `<tr><td><b>${r[1]}</b></td><td>${Number(r[3]).toLocaleString()}</td><td>${Number(r[5]).toLocaleString()}</td><td><div class="action-group"><button onclick="cetakNotaAwal('${r[0]}')" style="background:var(--primary); padding:6px; font-size:10px; width:auto;">📄 Nota</button>${aksi}</div></td></tr>`;
+        }).join("");
+        document.querySelector("#tabel_nota tbody").innerHTML = hNota || '<tr><td colspan="4" align="center">Kosong</td></tr>';
+
+        /// Tabel Exp - VERSI RAPI
+        let hExp = dataExpGlobal.filter(e => {
+            let t = new Date(e[0]);
+            return (t.getMonth()+1)===bln && t.getFullYear()===thn && (cari==="" || String(e[1]).toLowerCase().includes(cari));
+        }).map(e => {
+            outP += Number(e[2])||0;
+            
+            // LOGIKA PEMBEDAH JSON AGAR RAPI
+            let keteranganRapi = "";
+            try {
+                let parsed = JSON.parse(e[1]);
+                if (Array.isArray(parsed)) {
+                    keteranganRapi = parsed.map(item => item.n).join(", ");
+                } else {
+                    keteranganRapi = e[1];
+                }
+            } catch (err) {
+                // Jika bukan JSON (teks biasa), tampilkan apa adanya
+                keteranganRapi = e[1];
+            }
+
+            return `<tr>
+                <td>${new Date(e[0]).toLocaleDateString('id-ID')}</td>
+                <td>${keteranganRapi}</td>
+                <td>${Number(e[2]).toLocaleString()}</td>
+            </tr>`;
+        }).join("");
+        document.querySelector("#tabel_exp tbody").innerHTML = hExp || '<tr><td colspan="3" align="center">Kosong</td></tr>';
+
+        // Tabel Alih
+        let hAlih = dataAlihGlobal.filter(a => {
+            let t = new Date(a[0]);
+            return (t.getMonth()+1)===bln && t.getFullYear()===thn && (cari==="" || String(a[1]).toLowerCase().includes(cari));
+        }).map(a => `<tr><td>${new Date(a[0]).toLocaleDateString('id-ID')}</td><td>${a[1]}</td><td>${Number(a[2]).toLocaleString()}</td></tr>`).join("");
+        document.querySelector("#tabel_alih tbody").innerHTML = hAlih || '<tr><td colspan="3" align="center">Kosong</td></tr>';
+
+        document.getElementById('h_summary_masuk').innerText = inP.toLocaleString();
+        document.getElementById('h_summary_keluar').innerText = outP.toLocaleString();
+        document.getElementById('h_summary_laba').innerText = (inP - outP).toLocaleString();
+    }
+
+    async function loadData() {
+        try {
+            let res = await fetch(webAppUrl + "?action=getDashboard");
+            let d = await res.json();
+            document.getElementById('d_cash').innerText = d.cash.toLocaleString();
+            document.getElementById('d_bni').innerText = d.bni.toLocaleString();
+            document.getElementById('d_bri').innerText = d.bri.toLocaleString();
+            document.getElementById('d_masuk').innerText = d.masukBulanIni.toLocaleString();
+            document.getElementById('d_keluar').innerText = d.keluarBulanIni.toLocaleString();
+            document.getElementById('d_laba').innerText = (d.masukBulanIni - d.keluarBulanIni).toLocaleString();
+            
+            dataNotaGlobal = []; dataAlihGlobal = []; dataExpGlobal = [];
+
+            // FILTER SUPER KETAT
+            if(d.riwayatNota) {
+                d.riwayatNota.forEach(it => {
+                    if(!it || !it[1]) return;
+                    let nm = String(it[1]).trim().toLowerCase();
+                    let ket = String(it[2]).trim().toLowerCase();
+                    if(nm.includes("dari cash") || nm.includes("dari bni") || nm.includes("dari bri") || nm.includes("peralihan") || nm.includes("transfer") || ket.includes("peralihan")) {
+                        dataAlihGlobal.push([it[6]||new Date(), it[1]+" ("+it[2]+")", it[4]||0]);
+                    } else {
+                        dataNotaGlobal.push(it);
+                    }
+                });
+            }
+            document.getElementById('d_piutang').innerText = dataNotaGlobal.reduce((a,c)=>a+(Number(c[5])||0), 0).toLocaleString();
+
+            if(d.riwayatExp) {
+                d.riwayatExp.forEach(it => {
+                    let k = String(it[1]).toLowerCase();
+                    if(k.includes("transfer") || k.includes("peralihan") || k.includes("dari ")) dataAlihGlobal.push(it);
+                    else dataExpGlobal.push(it);
+                });
+            }
+            renderTabelBerdasarkanPeriode();
+        } catch(e) { console.error(e); }
+    }
+
+    // Fungsi bantu lainnya
+    function tambahBaris() {
+        let d = document.createElement('div'); d.className='item-row';
+        d.innerHTML = `<input type="text" class="nn" placeholder="Barang" style="flex:2"><input type="number" class="nq" placeholder="Qty" style="flex:1" oninput="updateOtomatis()"><input type="number" class="nh" placeholder="Harga" style="flex:1" oninput="updateOtomatis()">`;
+        document.getElementById('items-container').appendChild(d);
+    }
+    function updateOtomatis() {
+        let t = 0; document.querySelectorAll('.item-row').forEach(r => t += (r.querySelector('.nq').value * r.querySelector('.nh').value || 0));
+        document.getElementById('txt_total').innerText = t.toLocaleString();
+        document.getElementById('input_dp').value = t * 0.5;
+        hitungSisa();
+    }
+    function hitungSisa() {
+        let t = 0; document.querySelectorAll('.item-row').forEach(r => t += (r.querySelector('.nq').value * r.querySelector('.nh').value || 0));
+        let dp = document.getElementById('input_dp').value || 0;
+        document.getElementById('txt_sisa').innerText = (t - dp).toLocaleString();
+    }
+    function tambahBarisEstimasi() {
+        let d = document.createElement('div'); d.className='est-item-row'; d.style.display='flex'; d.style.gap='8px'; d.style.marginBottom='8px';
+        d.innerHTML = `<input type="text" class="est_nn" placeholder="Nama Barang" style="flex:2"><input type="number" class="est_nq" placeholder="Qty" style="flex:1" oninput="hitungOtomatisEstimasi()"><input type="number" class="est_nh" placeholder="Harga" style="flex:1" oninput="hitungOtomatisEstimasi()">`;
+        document.getElementById('est-items-container').appendChild(d);
+    }
+    function hitungOtomatisEstimasi() {
+        let t = 0; document.querySelectorAll('.est-item-row').forEach(r => t += (r.querySelector('.est_nq').value * r.querySelector('.est_nh').value || 0));
+        document.getElementById('est_txt_total').innerText = t.toLocaleString();
+        document.getElementById('est_txt_dp').innerText = (t * 0.5).toLocaleString();
+        document.getElementById('est_txt_sisa').innerText = (t * 0.5).toLocaleString();
+    }
+    function kirimEstimasiWAKhusus() {
+        let cs = document.getElementById('est_cs').value || "Pelanggan", t = 0, msg = `*ESTIMASI ASHEEQA PRINTING*\nCS: ${cs}\n\n`;
+        document.querySelectorAll('.est-item-row').forEach(r => {
+            let n = r.querySelector('.est_nn').value, q = r.querySelector('.est_nq').value, h = r.querySelector('.est_nh').value;
+            if(n) { msg += `- ${n} (${q}x${h}) = ${(q*h).toLocaleString()}\n`; t += (q*h); }
+        });
+        if(t === 0) return alert("Isi barang!");
+        msg += `\n*Total: Rp ${t.toLocaleString()}*\n*DP 50%: Rp ${(t*0.5).toLocaleString()}*\n\n_Terima kasih!_`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+    }
+    async function simpanData(p) {
+        let cs = document.getElementById('cs').value; if(!cs) return alert("Isi Nama!");
+        let itms = [], total = 0;
+        document.querySelectorAll('.item-row').forEach(r => {
+            let n = r.querySelector('.nn').value, q = r.querySelector('.nq').value, h = r.querySelector('.nh').value;
+            if(n) { itms.push({n,q,h,sub:q*h}); total += (q*h); }
+        });
+        let dp = document.getElementById('input_dp').value || 0;
+        if(p) {
+            cetak(cs, itms, total, dp, 0, "NOTA");
+            setTimeout(async () => { window.print(); await fetch(webAppUrl, {method:'POST', body:JSON.stringify({tipe:"Nota", nama:cs, total, dp, metode:document.getElementById('metode').value, items:itms})}); location.reload(); }, 1000);
+        } else {
+            await fetch(webAppUrl, {method:'POST', body:JSON.stringify({tipe:"Nota", nama:cs, total, dp, metode:document.getElementById('metode').value, items:itms})}); location.reload();
+        }
+    }
+    function cetak(cs, items, total, dpS, dpL, jdl) {
+        document.getElementById('p_judul').innerText = jdl; document.getElementById('p_cs').innerText = cs;
+        document.getElementById('p_tgl').innerText = new Date().toLocaleDateString('id-ID');
+        document.getElementById('p_items').innerHTML = items.map(i => `<tr><td>${i.n}</td><td align="center">${i.q}</td><td align="right">${Number(i.sub).toLocaleString()}</td></tr>`).join("");
+        document.getElementById('p_total').innerText = Number(total).toLocaleString();
+        document.getElementById('p_dp').innerText = Number(dpS).toLocaleString();
+        document.getElementById('p_sisa').innerText = (total - dpL - dpS).toLocaleString();
+    }
+    async function simpanExp() {
+        let n = document.getElementById('ex_n').value, h = document.getElementById('ex_h').value;
+        await fetch(webAppUrl, {method:'POST', body:JSON.stringify({tipe:"Pengeluaran", items:[{n,h}], total:h, metode:document.getElementById('ex_m').value})}); location.reload();
+    }
+    async function prosesAlih() {
+        let j = document.getElementById('tf_j').value, d = document.getElementById('tf_d').value, k = document.getElementById('tf_k').value;
+        await fetch(webAppUrl, {method:'POST', body:JSON.stringify({tipe:"Peralihan", dari:d, ke:k, total:j})}); location.reload();
+    }
+    function cetakNotaAwal(id) {
+        let n = dataNotaGlobal.find(x => x[0] == id);
+        let it = []; try { it = JSON.parse(n[2]); } catch(e) { it = [{n:n[2], q:1, sub:n[3]}]; }
+        cetak(n[1], it, n[3], n[4], 0, "NOTA");
+        setTimeout(() => window.print(), 500);
+    }
+    async function prosesPelunasan(id) {
+        let n = dataNotaGlobal.find(x => x[0] == id);
+        let it = []; try { it = JSON.parse(n[2]); } catch(e) { it = [{n:n[2], q:1, sub:n[3]}]; }
+        cetak(n[1], it, n[3], n[5], n[4], "NOTA LUNAS");
+        setTimeout(() => { window.print(); setTimeout(async () => { await fetch(webAppUrl, {method:'POST', body:JSON.stringify({tipe:"Pelunasan", id:id})}); location.reload(); }, 1000); }, 500);
+    }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
