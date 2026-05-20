@@ -288,23 +288,194 @@
         th { background: #f1f5f9; color: #475569; font-weight: 700; border: 1px solid #e2e8f0; padding: 10px 8px; }
         td { border: 1px solid #e2e8f0; padding: 10px 8px; color: #334155; }
         tr:nth-child(even) { background-color: #f8fafc; }
-        
-      /* DESAIN AREA CETAK NOTA */
-        #area-cetak-nota { display: none; }
-        @media print {
-            .no-print { display: none !important; }
-            #area-cetak-nota { display: block !important; width: 100%; font-family: 'Segoe UI', sans-serif; background: white; }
-            body { background: white; }
-            .nota-wrapper { border: none !important; } /* Hilangkan border kotak saat print jika ingin lebih bersih */
-        }
-        .nota-wrapper { border: 1.5px solid #333; padding: 20px; border-radius: 8px; max-width: 700px; margin: auto; background: white; }
-        .header-table { width: 100%; border-bottom: 3px double #333; padding-bottom: 15px; margin-bottom: 15px; }
-        .logo-img { width: 65px; height: 65px; object-fit: contain; }
-        .logo-box { width: 60px; height: 60px; background: #2c3e50; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; }
-        .p-judul { color: #2980b9; border: 2px solid #2980b9; padding: 4px 12px; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 14px; }
-        .table-pesanan { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .table-pesanan th { background: #f8f9fa; border: 1px solid #ccc; padding: 10px; font-weight: bold; }
-        .table-pesanan td { border: 1px solid #ccc; padding: 10px; }
+       
+/* =========================
+   NOTA MODERN ASHEEQA
+========================= */
+
+#area-cetak-nota{
+    display:none;
+    font-family:'Segoe UI',sans-serif;
+    color:#2c3e50;
+}
+
+/* WRAPPER */
+.nota-wrapper{
+    width:194mm;
+    min-height:130mm;
+    margin:auto;
+    background:#ffffff;
+    border-radius:14px;
+    padding:14px;
+    box-sizing:border-box;
+    overflow:hidden;
+    border:2px solid #e5e7eb;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* PRINT */
+@media print{
+
+    @page{
+        size:A5 landscape;
+        margin:5mm;
+    }
+
+    html,body{
+        width:210mm;
+        height:148mm;
+        margin:0;
+        padding:0;
+        background:white !important;
+        overflow:hidden;
+    }
+
+    body *{
+        visibility:hidden;
+    }
+
+    #area-cetak-nota,
+    #area-cetak-nota *{
+        visibility:visible;
+    }
+
+    #area-cetak-nota{
+        display:block !important;
+        position:absolute;
+        left:0;
+        top:0;
+        width:100%;
+    }
+
+    .nota-wrapper{
+        width:200mm;
+        border:none;
+        box-shadow:none;
+        padding:6mm;
+    }
+
+    .no-print{
+        display:none !important;
+    }
+}
+
+/* HEADER */
+.header-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:14px;
+    border-bottom:3px solid #3498db;
+    padding-bottom:10px;
+}
+
+.logo-img{
+    width:58px;
+    height:58px;
+    object-fit:contain;
+    border-radius:10px;
+}
+
+.p-judul{
+    background:#3498db;
+    color:white;
+    padding:8px 16px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:1px;
+    display:inline-block;
+}
+
+/* INFO CUSTOMER */
+.info-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:10px 14px;
+    margin-bottom:12px;
+}
+
+/* TABLE */
+.table-pesanan{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+    font-size:11px;
+    overflow:hidden;
+    border-radius:10px;
+}
+
+.table-pesanan th{
+    background:#3498db;
+    color:white;
+    padding:8px;
+    border:none;
+    font-weight:600;
+}
+
+.table-pesanan td{
+    border-bottom:1px solid #e5e7eb;
+    padding:8px;
+}
+
+.table-pesanan tr:nth-child(even){
+    background:#f8fafc;
+}
+
+/* TOTAL BOX */
+.total-box{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:14px;
+}
+
+.total-table{
+    width:260px;
+    border-collapse:collapse;
+    font-size:11px;
+    background:#f8fafc;
+    border-radius:12px;
+    overflow:hidden;
+    padding:10px;
+}
+
+.total-table td{
+    padding:6px 10px;
+}
+
+.total-table tr:not(:last-child){
+    border-bottom:1px dashed #cbd5e1;
+}
+
+/* GRAND TOTAL */
+.grand-total{
+    background:#3498db;
+    color:white;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.grand-total td{
+    padding:10px;
+}
+
+/* SISA */
+.sisa{
+    background:#ecfdf5;
+    color:#059669;
+    font-weight:700;
+}
+
+/* FOOTER */
+.footer-nota{
+    margin-top:14px;
+    padding-top:8px;
+    border-top:1px dashed #cbd5e1;
+    text-align:center;
+    font-size:10px;
+    color:#64748b;
+    letter-spacing:0.3px;
+}
 
         /* RESPONSIVE LAPTOP / DESKTOP */
         @media (min-width: 768px) {
@@ -348,66 +519,149 @@
     </style>
 </head>
 <body>
+
 <div id="area-cetak-nota">
+
     <div class="nota-wrapper">
+
+        <!-- HEADER -->
         <table class="header-table">
             <tr>
-                <td style="width: 75px;">
-                   <img src="https://lh3.googleusercontent.com/u/0/d/1F055wulsiC-LDjW_NMZ4yXsMSCDj53TW" class="logo-img" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='flex';">
-                    <div id="alt-logo" class="logo-box" style="display:none;">A</div>
+
+                <td style="width:70px;">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1F055wulsiC-LDjW_NMZ4yXsMSCDj53TW"
+                         class="logo-img"
+                         onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='flex';">
+
+                    <div id="alt-logo" class="logo-box" style="display:none;">
+                        A
+                    </div>
                 </td>
+
                 <td>
-                    <h2 style="margin:0; color: #2c3e50; font-size: 24px; letter-spacing: 1px;">ASHEEQA PRINTING</h2>
-                    <p style="font-size:11px; margin:3px 0; font-weight: bold; color: #2980b9;">Percetakan & Desain Undangan</p>
-                    <p style="font-size:10px; margin:0; color: #555;">Jl. Borong Raya 2 | WhatsApp: 089699910769</p>
+                    <h2 style="margin:0; color:#2c3e50; font-size:22px; letter-spacing:1px;">
+                        ASHEEQA PRINTING
+                    </h2>
+
+                    <p style="font-size:11px; margin:2px 0; font-weight:bold; color:#2980b9;">
+                        Percetakan & Desain Undangan
+                    </p>
+
+                    <p style="font-size:10px; margin:0; color:#555;">
+                        Jl. Borong Raya 2 | WhatsApp: 089699910769
+                    </p>
                 </td>
-                <td style="text-align: right; vertical-align: middle;">
-                    <span id="p_judul" class="p-judul">NOTA</span>
+
+                <td style="text-align:right; vertical-align:middle;">
+                    <span id="p_judul" class="p-judul">
+                        NOTA
+                    </span>
                 </td>
+
             </tr>
         </table>
 
-        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 15px; padding: 0 5px;">
-            <div><b>Kepada Yth:</b><br><span id="p_cs" style="font-size: 14px; font-weight: bold; text-transform: uppercase;"></span></div>
-            <div style="text-align: right;"><b>Tanggal:</b><br><span id="p_tgl"></span></div>
+        <!-- INFO -->
+<div class="info-box"
+     style="
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+     ">
+
+            <div>
+                <b>Kepada Yth:</b><br>
+                <span id="p_cs"
+                      style="
+                        font-size:14px;
+                        font-weight:bold;
+                        text-transform:uppercase;
+                      ">
+                </span>
+            </div>
+
+            <div style="text-align:right;">
+                <b>Tanggal:</b><br>
+                <span id="p_tgl"></span>
+            </div>
+
         </div>
 
+        <!-- TABEL -->
         <table class="table-pesanan">
+
             <thead>
                 <tr>
                     <th>Deskripsi Pesanan</th>
-                    <th style="width: 60px; text-align: center;">Qty</th>
-                    <th style="width: 120px; text-align: right;">Subtotal</th>
+
+                    <th style="
+                        width:60px;
+                        text-align:center;
+                    ">
+                        Qty
+                    </th>
+
+                    <th style="
+                        width:120px;
+                        text-align:right;
+                    ">
+                        Subtotal
+                    </th>
                 </tr>
             </thead>
+
             <tbody id="p_items"></tbody>
+
         </table>
 
-        <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
-            <table style="width: 260px; font-size: 13px; line-height: 1.8;">
+        <!-- TOTAL -->
+        <div class="total-box">
+
+            <table class="total-table">
+
                 <tr>
                     <td>Total Keseluruhan</td>
-                    <td style="text-align: right;">Rp <span id="p_total"></span></td>
+
+                    <td style="text-align:right;">
+                        Rp <span id="p_total"></span>
+                    </td>
                 </tr>
+
                 <tr id="row_dp_lama">
                     <td>Uang Muka / Sebelumnya</td>
-                    <td style="text-align: right;">- Rp <span id="p_dp_lama"></span></td>
+
+                    <td style="text-align:right;">
+                        - Rp <span id="p_dp_lama"></span>
+                    </td>
                 </tr>
-                <tr>
-                    <td style="border-top: 1px solid #333;"><b>Bayar Sekarang</b></td>
-                    <td style="text-align: right; border-top: 1px solid #333;"><b>Rp <span id="p_dp"></span></b></td>
+
+                <tr class="grand-total">
+                    <td>Bayar Sekarang</td>
+
+                    <td style="text-align:right;">
+                        Rp <span id="p_dp"></span>
+                    </td>
                 </tr>
-                <tr style="font-size: 15px; color: #27ae60;">
-                    <td><b>Sisa Pelunasan</b></td>
-                    <td style="text-align: right;"><b>Rp <span id="p_sisa"></span></b></td>
+
+                <tr class="sisa">
+                    <td>Sisa Pelunasan</td>
+
+                    <td style="text-align:right;">
+                        Rp <span id="p_sisa"></span>
+                    </td>
                 </tr>
+
             </table>
+
         </div>
 
-        <div style="margin-top: 30px; border-top: 1px dashed #bbb; padding-top: 10px; font-size: 10px; text-align: center; color: #666; font-style: italic;">
+        <!-- FOOTER -->
+        <div class="footer-nota">
             "Terima kasih telah mempercayakan cetakan Anda kepada kami."
         </div>
+
     </div>
+
 </div>
 
 <div class="no-print app-layout">
@@ -611,7 +865,7 @@
         }).join("");
         document.querySelector("#tabel_nota tbody").innerHTML = hNota || '<tr><td colspan="4" align="center">Kosong</td></tr>';
 
-        /// Tabel Exp - VERSI RAPI
+        // Tabel Exp - VERSI RAPI
         let hExp = dataExpGlobal.filter(e => {
             let t = new Date(e[0]);
             return (t.getMonth()+1)===bln && t.getFullYear()===thn && (cari==="" || String(e[1]).toLowerCase().includes(cari));
@@ -639,7 +893,6 @@
             </tr>`;
         }).join("");
         document.querySelector("#tabel_exp tbody").innerHTML = hExp || '<tr><td colspan="3" align="center">Kosong</td></tr>';
-
         // Tabel Alih
         let hAlih = dataAlihGlobal.filter(a => {
             let t = new Date(a[0]);
